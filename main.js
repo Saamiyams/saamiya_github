@@ -14,7 +14,7 @@ export const web3Modal = new WalletConnectModalSign({
   projectId,
   metadata: {
     name: "Demo Wallet Connect",
-    description: "Demo sending transaction to a wallet",
+    description: "Demo sending message to a wallet",
     url: "http://localhost:5173/"
   },
 });
@@ -39,8 +39,8 @@ async function handleConnect() {
 
     const proposalNamespace = {
       eip155: {
-        methods: ["eth_sendTransaction"],
-        //using Polygon Mumbai for testing
+        methods: ["personal_sign", "eth_sendTransaction"],
+        //using Polygon Mumbai (80001) for testing. Use eip155:137 for Polygon.
         chains: ["eip155:80001"],
         events: ["connect", "disconnect"],
       },
@@ -72,20 +72,19 @@ async function handleSend() {
       return;
     }
 
-    const tx = {
-      from: accounts,
-      to: "0xBDE1EAE59cE082505bB73fedBa56252b1b9C60Ce",
-      data: "0x",
-      gasPrice: "0x029104e28c",
-      gasLimit: "0x5208",
-      value: "0x00",
-    };
+    const msg = [
+      "Hello world",
+      "0x1268f9145F9F1EE920D5CDcd556f94a8507562dc"
+    ];
+
+    console.log("msg");
+    console.log(msg);
 
     const result = await web3Modal.request({
       topic: sessions[0].topic,
       request: {
-        method: "eth_sendTransaction",
-        params: [tx]
+        method: "personal_sign",
+        params: msg
       },
       chainId: "eip155:80001"
     })
